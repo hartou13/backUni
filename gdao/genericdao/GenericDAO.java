@@ -421,7 +421,7 @@ public class GenericDAO {
     }
 
     public static Field getFieldOfString(Class cl, String str) {
-        Field[] lifi = cl.getDeclaredFields();
+        Field[] lifi = GenericDAO.listAllFields(cl);
         for (Field lifi1 : lifi) {
             if (lifi1.getName().equalsIgnoreCase(str)) {
                 return lifi1;

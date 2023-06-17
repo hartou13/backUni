@@ -3,7 +3,9 @@ package qc.query.ca.condition;
 import java.util.ArrayList;
 import qc.exception.ColumnNotPrecisedException;
 import qc.exception.NoGivenQueryReferenceException;
+import qc.exception.NoQueryTypeException;
 import qc.query.Queriable;
+import qc.query.ca.ColumnAffector;
 
 /**
  *

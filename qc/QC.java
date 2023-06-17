@@ -52,7 +52,7 @@ public class QC {
     }
 
     public static Query buildMultiQuery(SearchParameters sp, String tableName) throws Exception {
-        String res = "";
+        // String res = "";
         Query q = new Query();
         q.setQueryType(QueryType.SELECT);
         q.setTableName(tableName);
@@ -68,8 +68,8 @@ public class QC {
         ConditionMerge cm2 = new ConditionMerge(Condition.equals("1", 1));
         KINumber[] kin = sp.getKin();
         if (kin != null && kin.length > 0) {
-            cm2 = new ConditionMerge(Condition.between(kin[0].getKey(), kin[0].getMin(), kin[0].getMax()));
-            for (int i = 1; i < kin.length; i++) {
+            cm2 = new ConditionMerge(Condition.equals("1", 1));
+            for (int i = 0; i < kin.length; i++) {
                 KINumber kv1 = kin[i];
                 if (kv1.getMin() == null)
                     cm2 = cm2.add(Condition.infEq(kv1.getKey(), kv1.getMax()), MergeType.AND);
@@ -124,7 +124,7 @@ public class QC {
             q.setLimit(sp.getNb());
             q.setOffset((sp.getPage() - 1) * sp.getNb());
         }
-        res = q.getQuery();
+        // res = q.getQuery();
         return q;
     }
 

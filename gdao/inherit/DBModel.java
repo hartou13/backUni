@@ -6,6 +6,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Vector;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -67,10 +68,22 @@ public class DBModel<T extends DBModel, E extends Object> {
 	}
 
 	public int save() throws Exception {
+		this.setPkVal(null);
 		return GenericDAO.save(this, null);
+	}
+	public int saveList(List<T> list) throws Exception {
+		Connection con=GenericDAO.getConPost();
+		int res=0;
+		for (T t : list) {
+			t.setPkVal(null);
+			GenericDAO.save(t, con);
+		}
+		con.close();
+		return res;
 	}
 
 	public int save(Connection con) throws Exception {
+		this.setPkVal(null);
 		return GenericDAO.save(this, con);
 	}
 

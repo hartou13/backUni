@@ -2,7 +2,7 @@ package universalController.controller;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
+import java.util.List;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,13 +14,12 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.multipart.MultipartFile;
 import com.google.gson.Gson;
-
+import CSVImport.CSVProcessor;
 import gdao.genericdao.GenericDAO;
 import gdao.inherit.DBModel;
 import gdao.login.token.Token;
-// import model.T;
 import pdf.PdfGen;
 import qc.QC;
 import qc.query.Query;
@@ -54,7 +53,6 @@ public class UniController<T extends DBModel> {
         try {
             // System.out.println(model.list());
             System.gc();
-
             return new Success(model.listAll());
         } catch (Exception e) {
             return new Failure(new Error(500, e.getMessage()));
@@ -65,12 +63,10 @@ public class UniController<T extends DBModel> {
     public Response pdfAll(T model) throws Exception {
         try {
             System.gc();
-
             ArrayList<T> list = model.listAll();
             PdfGen.genPdfLst(model.getClass().getSimpleName() + ".pdf", (ArrayList) list);
             // System.out.println(model.list());
             System.gc();
-
             return new Success(model.getClass().getSimpleName() + ".pdf");
         } catch (Exception e) {
             return new Failure(new Error(500, e.getMessage()));
@@ -85,7 +81,6 @@ public class UniController<T extends DBModel> {
             PdfGen.genPdf(model.getClass().getSimpleName() + ".pdf", list.get(0));
             // System.out.println(model.list());
             System.gc();
-
             return new Success(model.getClass().getSimpleName() + ".pdf");
         } catch (Exception e) {
             return new Failure(new Error(500, e.getMessage()));
@@ -98,7 +93,6 @@ public class UniController<T extends DBModel> {
             // System.out.println(model.list());
             model.setPkVal(id);
             System.gc();
-
             return new Success(model.list());
         } catch (Exception e) {
             return new Failure(new Error(500, e.getMessage()));
@@ -141,8 +135,28 @@ public class UniController<T extends DBModel> {
             if (Token.isTokenAvailable(token)) {
                 model.save();
                 System.gc();
-
                 return new Success(model.list());
+            } else {
+                System.out.println("token expired");
+                return new Failure(new Error(403, "token expired"));
+            }
+            // return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new Failure(new Error(500, e.getMessage()));
+        }
+    }
+
+    @PostMapping("/CSV/upload")
+    public Response csvUpload(@RequestParam MultipartFile file, @RequestHeader(name = "token")  String token,
+            T model) throws Exception {
+        try {
+            // System.out.println(model);
+            if (Token.isTokenAvailable(token)) {
+                System.out.println(file);
+                List<T> list = CSVProcessor.readCSV(file, model.getClass());
+                System.gc();
+                return new Success(model.saveList(list));
             } else {
                 System.out.println("token expired");
                 return new Failure(new Error(403, "token expired"));
@@ -162,7 +176,6 @@ public class UniController<T extends DBModel> {
             // System.out.println(model);
             model.delete();
             System.gc();
-
             return new Success("réussite");
             // return null;
         } catch (Exception e) {
@@ -180,7 +193,6 @@ public class UniController<T extends DBModel> {
             System.out.println(update);
             update.getOld().update(update.getBrand());
             System.gc();
-
             return new Success(update.getBrand().list());
             // return null;
         } catch (Exception e) {
@@ -188,5 +200,4 @@ public class UniController<T extends DBModel> {
             return new Failure(new Error(500, e.getMessage()));
         }
     }
-
 }

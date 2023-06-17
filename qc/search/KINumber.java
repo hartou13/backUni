@@ -31,5 +31,10 @@ public class KINumber {
     public void setMax(Double max) {
         this.max = max;
     }
+
+    @Override
+    public String toString() {
+        return "KINumber [key=" + key + ", min=" + min + ", max=" + max + "]";
+    }
     
 }
